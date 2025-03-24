@@ -1,6 +1,6 @@
 # Obelisk
 
-![Obelisk Intro Image](https://raw.githubusercontent.com/yadibolt/obelisk/refs/heads/main/_github_hosted/obelisk_intro_image.png)
+![Obelisk Intro Image](https://raw.githubusercontent.com/yadibolt/obelisk/refs/heads/main/_github_hosted/obelisk_intro_image.png)(width=150 height=150)
 
 Obelisk is a lightweight, open-source CMS that simplifies content management while providing the flexibility to build modern, custom websites.
 
