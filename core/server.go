@@ -15,15 +15,15 @@ type IServer interface {
 	NewServer(endpoints map[string]func(w http.ResponseWriter, r *http.Request)) *Server
 	GetInitialized() bool
 	GetEndpoints() map[string]func(w http.ResponseWriter, r *http.Request)
-	GetEndpointPrefix() string
+	GetPrefix() string
 	SetInitialized(value bool)
 	SetEndpoints(value map[string]func(w http.ResponseWriter, r *http.Request))
-	SetEndpointPrefix(value string)
+	SetPrefix(value string)
 }
 
 type Server struct {
 	Port int `yaml:"port"`
-	EndpointPrefix string `yaml:"endpointPrefix"`
+	Prefix string `yaml:"prefix"`
 	Endpoints map[string]func(w http.ResponseWriter, r *http.Request)
 	Initialized bool
 }
@@ -46,13 +46,13 @@ func (server *Server) NewServer(endpoints map[string]func(w http.ResponseWriter,
 		log.Fatal("\n[Obelisk] Port should not be less than 0.")
 	}
 	
-	match, err := regexp.MatchString(`^$|^[a-z]+$`, server.EndpointPrefix)
+	match, err := regexp.MatchString(`^$|^[a-z]+$`, server.Prefix)
 	if err != nil {
-		log.Fatal("\n[Obelisk] Endpoint Prefix does not follow the pattern:\n		'<foo>'")
+		log.Fatal("\n[Obelisk] Prefix does not follow the pattern:\n		'<foo>'")
 	}
 	if !match {
-		server.SetEndpointPrefix(server.EndpointPrefix)
-		log.Fatal("\n[Obelisk] Endpoint Prefix does not follow the pattern:\n		'<foo>'")
+		server.SetPrefix(server.Prefix)
+		log.Fatal("\n[Obelisk] Prefix does not follow the pattern:\n		'<foo>'")
 	}
 
 	server.SetEndpoints(endpoints)
@@ -76,7 +76,7 @@ func (server *Server) Serve() {
 		if !regex.MatchString(endpoint) {
 			log.Fatal("\n[Obelisk] Endpoint does not follow the pattern:\n		'<foo>/<bar>/<foo>'")
 		}
-		http.HandleFunc("/" + server.EndpointPrefix + "/" + endpoint, endpointFn)
+		http.HandleFunc("/" + server.Prefix + "/" + endpoint, endpointFn)
 	}
 	log.Printf(`
    ____  __         ___      __  
@@ -85,7 +85,7 @@ func (server *Server) Serve() {
 / /_/ / /_/ /  __/ / (__  ) ,<   
 \____/_.___/\___/_/_/____/_/|_|  
                                  `)
-	log.Printf("API Server started! Listening on :%d/%s", server.Port, server.EndpointPrefix)
+	log.Printf("API Server started! Listening on :%d/%s", server.Port, server.Prefix)
 	
 	log.Fatal(http.ListenAndServe(":" + strconv.FormatInt(int64(server.Port), 10), nil))
 }
@@ -98,8 +98,8 @@ func (server *Server) GetEndpoints() map[string]func(w http.ResponseWriter, r *h
 	return server.Endpoints
 }
 
-func (server *Server) GetEndpointPrefix() string {
-	return server.EndpointPrefix
+func (server *Server) GetPrefix() string {
+	return server.Prefix
 }
 
 func (server *Server) SetInitialized(value bool) {
@@ -110,6 +110,6 @@ func (server *Server) SetEndpoints(value map[string]func(w http.ResponseWriter, 
 	server.Endpoints = value
 }
 
-func (server *Server) SetEndpointPrefix(value string) {
-	server.EndpointPrefix = value
+func (server *Server) SetPrefix(value string) {
+	server.Prefix = value
 }
